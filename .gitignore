@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+*.spec
+
+# Environment files (NEVER commit real secrets)
+.env
+*.env.local
+
+# Database files containing real user data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.svbak
+backups/
+
+# Logs
+*.log
+logs/
+
+# Export files (may contain plaintext passwords)
+vault_export*.csv
+vault_export*.json
+*.export.csv
+*.export.json
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+
+# MyPy cache
+.mypy_cache/
+
+# Ruff cache
+.ruff_cache/
+
+# PyInstaller
+*.spec
