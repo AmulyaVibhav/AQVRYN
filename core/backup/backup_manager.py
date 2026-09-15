@@ -27,19 +27,15 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
-import shutil
-import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from config.settings import BACKUP_DIR
 from core.crypto.encryption import decrypt, encrypt
-from core.crypto.kdf import generate_kdf_params, derive_key
-from core.crypto.key_manager import VaultKeyMaterial
+from core.crypto.kdf import derive_key, generate_kdf_params
 from core.database.database_manager import DatabaseManager
 from core.database.db_models import DbCategory, DbPasswordHistory, DbVaultEntry, DbVaultMetadata
-from core.models.vault_models import AppSettings
 from core.utilities.exceptions import BackupError, IntegrityError
 from core.utilities.logging_utils import get_logger, security_logger
 
@@ -80,7 +76,7 @@ class BackupManager:
         self._backup_dir.mkdir(parents=True, exist_ok=True)
 
         if backup_path is None:
-            ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            ts = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             backup_path = self._backup_dir / f"securevault_backup_{ts}.svbak"
 
         # Collect all data from DB
@@ -124,7 +120,7 @@ class BackupManager:
         logger.info("Backup created at %s", backup_path)
         return backup_path
 
-    def _collect_payload(self) -> dict:
+    def _collect_payload(self) -> dict[str, Any]:
         """Collect all vault data for backup."""
         with self._db.session() as session:
             meta = session.query(DbVaultMetadata).first()
@@ -187,7 +183,7 @@ class BackupManager:
         backup_path: Path,
         backup_password: str,
         overwrite_existing: bool = False,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """
         Restore a vault from an encrypted backup.
 
@@ -215,7 +211,7 @@ class BackupManager:
 
     def restore_apply(
         self,
-        preview: dict,
+        preview: dict[str, Any],
         overwrite_existing: bool = False,
     ) -> None:
         """
@@ -252,17 +248,17 @@ class BackupManager:
         security_logger.restore_performed(str(preview.get("vault_id", "unknown")))
         logger.info("Backup restored successfully.")
 
-    def _apply_payload(self, payload: dict) -> None:
+    def _apply_payload(self, payload: dict[str, Any]) -> None:
         """Write backup payload into the database."""
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        def _parse_dt(s):
+        def _parse_dt(s: str | None) -> datetime | None:
             if not s or s == "None":
                 return None
             try:
                 return datetime.fromisoformat(s)
-            except Exception:
-                return datetime.now(timezone.utc)
+            except ValueError:
+                return datetime.now(UTC)
 
         with self._db.session() as session:
             # Clear existing data
@@ -279,8 +275,8 @@ class BackupManager:
                 vault_id=meta.get("vault_id", ""),
                 format_version=int(meta.get("format_version", 1)),
                 app_version=meta.get("app_version", "1.0.0"),
-                created_at=_parse_dt(meta.get("created_at")) or datetime.now(timezone.utc),
-                modified_at=datetime.now(timezone.utc),
+                created_at=_parse_dt(meta.get("created_at")) or datetime.now(UTC),
+                modified_at=datetime.now(UTC),
                 entry_count=len(payload.get("entries", [])),
                 key_material_json=meta.get("key_material_json", "{}"),
             ))
@@ -302,8 +298,8 @@ class BackupManager:
                     is_favorite=e.get("is_favorite", False),
                     category_id=e.get("category_id"),
                     tags=e.get("tags"),
-                    created_at=_parse_dt(e.get("created_at")) or datetime.now(timezone.utc),
-                    modified_at=_parse_dt(e.get("modified_at")) or datetime.now(timezone.utc),
+                    created_at=_parse_dt(e.get("created_at")) or datetime.now(UTC),
+                    modified_at=_parse_dt(e.get("modified_at")) or datetime.now(UTC),
                     last_used_at=_parse_dt(e.get("last_used_at")),
                     card_holder=e.get("card_holder"),
                     card_expiry=e.get("card_expiry"),
@@ -328,11 +324,11 @@ class BackupManager:
     # Validation helpers
     # ------------------------------------------------------------------
 
-    def _load_and_validate_backup_file(self, path: Path) -> dict:
+    def _load_and_validate_backup_file(self, path: Path) -> dict[str, Any]:
         if not path.exists():
             raise BackupError(f"Backup file not found: {path}")
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 outer = json.load(f)
         except json.JSONDecodeError as exc:
             raise BackupError("Backup file is not valid JSON.", detail=str(exc)) from exc
@@ -343,7 +339,7 @@ class BackupManager:
             raise BackupError(f"Backup version {outer.get('version')} is not supported.")
         return outer
 
-    def _decrypt_backup_payload(self, outer: dict, backup_password: str) -> dict:
+    def _decrypt_backup_payload(self, outer: dict[str, Any], backup_password: str) -> dict[str, Any]:
         from core.crypto.kdf import KDFParams
 
         kdf_params = KDFParams.from_dict(outer["kdf_params"])

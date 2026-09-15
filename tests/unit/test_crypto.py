@@ -4,23 +4,29 @@ Tests: key derivation, encryption, decryption, tamper detection, key hierarchy.
 """
 from __future__ import annotations
 
-import os
 import sys
+
 import pytest
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
 
-from core.crypto.secure_random import (
-    constant_time_compare, generate_key, generate_nonce, generate_salt,
-    secure_bytes, secure_choice, secure_shuffle,
-)
+from core.crypto.encryption import decrypt, decrypt_text, encrypt, encrypt_text
 from core.crypto.kdf import KDFParams, derive_key, generate_kdf_params
-from core.crypto.encryption import decrypt, encrypt, encrypt_text, decrypt_text
 from core.crypto.key_manager import KeyManager, VaultKeyMaterial
-from core.utilities.exceptions import (
-    AuthenticationError, DecryptionError, IntegrityError, KeyDerivationError, VaultLockedError,
+from core.crypto.secure_random import (
+    constant_time_compare,
+    generate_key,
+    generate_nonce,
+    generate_salt,
+    secure_bytes,
+    secure_shuffle,
 )
-
+from core.utilities.exceptions import (
+    DecryptionError,
+    IntegrityError,
+    KeyDerivationError,
+    VaultLockedError,
+)
 
 # ---------------------------------------------------------------------------
 # Secure random

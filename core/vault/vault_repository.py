@@ -16,18 +16,16 @@ Provides:
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
-from core.crypto.encryption import decrypt, decrypt_text, encrypt, encrypt_text
+from core.crypto.encryption import decrypt_text, encrypt_text
 from core.crypto.key_manager import KeyManager
 from core.database.db_models import (
     DbCategory,
     DbPasswordHistory,
     DbVaultEntry,
-    DbVaultMetadata,
 )
 from core.models.vault_models import (
     Category,
@@ -35,7 +33,7 @@ from core.models.vault_models import (
     PasswordHistoryEntry,
     VaultEntry,
 )
-from core.utilities.exceptions import ValidationError, VaultLockedError
+from core.utilities.exceptions import ValidationError
 from core.utilities.logging_utils import get_logger, security_logger
 
 logger = get_logger(__name__)
@@ -213,7 +211,7 @@ class VaultRepository:
         # Check if password changed — if so, archive old one
         old_password = self._dec(db_entry.password_enc, entry.id, "password")
         if old_password and old_password != entry.password:
-            self._add_history_row(session, entry.id, old_password, datetime.now(timezone.utc))
+            self._add_history_row(session, entry.id, old_password, datetime.now(UTC))
             # Trim history
             self._trim_history(session, entry.id, max_history)
 
@@ -223,7 +221,7 @@ class VaultRepository:
         db_entry.is_favorite = entry.is_favorite
         db_entry.category_id = entry.category_id
         db_entry.tags = json.dumps(entry.tags)
-        db_entry.modified_at = datetime.now(timezone.utc)
+        db_entry.modified_at = datetime.now(UTC)
         db_entry.last_used_at = entry.last_used_at
         db_entry.card_holder = entry.card_holder or None
         db_entry.card_expiry = entry.card_expiry or None

@@ -3,8 +3,7 @@ Password strength indicator widget.
 """
 from __future__ import annotations
 
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QProgressBar, QLabel
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QWidget
 
 
 class StrengthIndicator(QWidget):

@@ -3,18 +3,23 @@ Main vault view — sidebar navigation + content stack.
 """
 from __future__ import annotations
 
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QVBoxLayout, QSplitter, QFrame,
-    QPushButton, QLabel, QStackedWidget,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-from core.vault.vault_service import VaultService
 from core.security.clipboard_manager import ClipboardManager
 from core.utilities.logging_utils import get_logger
+from core.vault.vault_service import VaultService
 from desktop.views.dashboard_view import DashboardView
-from desktop.views.vault_view import VaultView
 from desktop.views.settings_view import SettingsView
+from desktop.views.vault_view import VaultView
 
 logger = get_logger(__name__)
 

@@ -3,16 +3,19 @@ Unit tests for password generator.
 """
 from __future__ import annotations
 
-import re
 import sys
-import string
+
 import pytest
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
 
 from core.generator.password_generator import (
-    GeneratorConfig, PasswordGenerator, estimate_strength, _BUILTIN_WORDLIST,
-    UPPERCASE, LOWERCASE, DIGITS, SYMBOLS,
+    LOWERCASE,
+    SYMBOLS,
+    UPPERCASE,
+    GeneratorConfig,
+    PasswordGenerator,
+    estimate_strength,
 )
 from core.models.vault_models import PasswordStrength
 

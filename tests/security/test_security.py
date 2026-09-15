@@ -6,19 +6,17 @@ from __future__ import annotations
 
 import logging
 import sys
-import tempfile
 from pathlib import Path
+
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from core.crypto.encryption import decrypt, encrypt
-from core.crypto.key_manager import KeyManager
 from core.crypto.secure_random import generate_key
 from core.models.vault_models import VaultEntry
-from core.vault.vault_service import VaultService
 from core.utilities.exceptions import AuthenticationError, IntegrityError
-
+from core.vault.vault_service import VaultService
 
 # ---------------------------------------------------------------------------
 # Tamper detection
@@ -187,7 +185,6 @@ class TestPathTraversal:
 class TestBackupTamper:
     def test_corrupted_backup_fails(self, tmp_path):
         from core.backup.backup_manager import BackupManager
-        from core.database.database_manager import DatabaseManager
         from core.utilities.exceptions import BackupError
 
         db_path = tmp_path / "backup_test.db"

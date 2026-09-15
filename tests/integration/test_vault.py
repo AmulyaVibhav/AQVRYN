@@ -5,17 +5,19 @@ Uses an in-memory SQLite database.
 from __future__ import annotations
 
 import sys
-import tempfile
 from pathlib import Path
+
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from core.vault.vault_service import VaultService
-from core.models.vault_models import Category, ItemType, VaultEntry
+from core.models.vault_models import Category, VaultEntry
 from core.utilities.exceptions import (
-    AuthenticationError, VaultAlreadyExistsError, VaultLockedError,
+    AuthenticationError,
+    VaultAlreadyExistsError,
+    VaultLockedError,
 )
+from core.vault.vault_service import VaultService
 
 
 @pytest.fixture
@@ -98,6 +100,17 @@ class TestVaultCRUD:
         saved = unlocked_vault.add_entry(entry)
         assert saved.id
         assert saved.title == "Test Gmail"
+
+    def test_new_entry_form_stays_blank_until_user_types_title(self, unlocked_vault):
+        from desktop.views.vault_view import EntryDetailPanel
+        from core.security.clipboard_manager import ClipboardManager
+
+        panel = EntryDetailPanel(unlocked_vault, ClipboardManager())
+        panel.new_entry()
+
+        assert panel._field_title.text() == ""
+        assert panel._is_new is True
+        assert panel._save_btn.isVisible() is True
 
     def test_get_entry(self, unlocked_vault):
         entry = VaultEntry(title="Test Entry", username="user", password="pass")

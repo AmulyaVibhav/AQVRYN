@@ -16,8 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import urllib.request
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 from core.models.vault_models import SecurityAuditResult, VaultEntry
 from core.utilities.logging_utils import get_logger
@@ -61,7 +60,6 @@ class SecurityAuditor:
         self, entries: list[VaultEntry], result: SecurityAuditResult
     ) -> None:
         from core.generator.password_generator import estimate_strength
-        from core.models.vault_models import PasswordStrength
 
         for entry in entries:
             if not entry.password:
@@ -97,13 +95,13 @@ class SecurityAuditor:
     def _check_old_passwords(
         self, entries: list[VaultEntry], result: SecurityAuditResult
     ) -> None:
-        cutoff = datetime.now(timezone.utc) - timedelta(days=OLD_PASSWORD_DAYS)
+        cutoff = datetime.now(UTC) - timedelta(days=OLD_PASSWORD_DAYS)
         for entry in entries:
             if not entry.password:
                 continue
             ts = entry.modified_at
             if ts.tzinfo is None:
-                ts = ts.replace(tzinfo=timezone.utc)
+                ts = ts.replace(tzinfo=UTC)
             if ts < cutoff:
                 result.old_passwords.append(entry.id)
 

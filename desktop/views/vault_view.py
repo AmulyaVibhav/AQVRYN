@@ -5,16 +5,29 @@ from __future__ import annotations
 
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QVBoxLayout, QListWidget, QListWidgetItem,
-    QLineEdit, QPushButton, QLabel, QFrame, QScrollArea, QComboBox,
-    QTextEdit, QCheckBox, QMessageBox, QDialog, QFormLayout,
-    QDialogButtonBox, QSplitter, QTabWidget,
+    QCheckBox,
+    QComboBox,
+    QFormLayout,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QListWidget,
+    QListWidgetItem,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QSplitter,
+    QTabWidget,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
-from core.models.vault_models import ItemType, VaultEntry
-from core.vault.vault_service import VaultService
+from core.models.vault_models import VaultEntry
 from core.security.clipboard_manager import ClipboardManager
 from core.utilities.logging_utils import get_logger
+from core.vault.vault_service import VaultService
 from desktop.widgets.password_field import PasswordField
 from desktop.widgets.strength_indicator import StrengthIndicator
 
@@ -396,7 +409,19 @@ class EntryDetailPanel(QWidget):
         """Open a blank form for a new entry."""
         self._current_entry = None
         self._is_new = True
-        self._populate_fields(VaultEntry(title=""))
+
+        # Avoid creating a `VaultEntry` with an empty required title; the form is
+        # intentionally blank until the user enters one.
+        blank_entry = VaultEntry(title="Untitled")
+        self._populate_fields(blank_entry)
+        self._field_title.clear()
+        self._field_username.clear()
+        self._field_password.set_password("")
+        self._field_url.clear()
+        self._field_notes.clear()
+        self._field_favorite.setChecked(False)
+        self._field_totp.clear()
+
         self._set_read_only(False)
         self._title_label.setText("New Entry")
         self._edit_btn.setVisible(False)

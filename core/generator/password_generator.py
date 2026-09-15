@@ -15,10 +15,8 @@ from __future__ import annotations
 
 import re
 import string
-import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 from core.crypto.secure_random import secure_choice, secure_int, secure_shuffle
 from core.models.vault_models import PasswordStrength
@@ -37,6 +35,7 @@ SYMBOLS: str = "!@#$%^&*()-_=+[]{}|;:,.<>?"
 UNAMBIGUOUS_UPPERCASE: str = "".join(c for c in UPPERCASE if c not in AMBIGUOUS_CHARS)
 UNAMBIGUOUS_LOWERCASE: str = "".join(c for c in LOWERCASE if c not in AMBIGUOUS_CHARS)
 UNAMBIGUOUS_DIGITS: str = "".join(c for c in DIGITS if c not in AMBIGUOUS_CHARS)
+UNAMBIGUOUS_SYMBOLS: str = "".join(c for c in SYMBOLS if c not in AMBIGUOUS_CHARS)
 
 
 @dataclass
@@ -106,7 +105,9 @@ class PasswordGenerator:
                     required.append(secure_choice(dg))
 
         if config.use_symbols and config.min_symbols > 0:
-            sym = config.custom_symbols if config.custom_symbols else SYMBOLS
+            sym = config.custom_symbols if config.custom_symbols else (
+                UNAMBIGUOUS_SYMBOLS if config.exclude_ambiguous else SYMBOLS
+            )
             for _ in range(config.min_symbols):
                 required.append(secure_choice(sym))
 
@@ -131,7 +132,9 @@ class PasswordGenerator:
         if config.use_digits:
             pool += UNAMBIGUOUS_DIGITS if config.exclude_ambiguous else DIGITS
         if config.use_symbols:
-            pool += config.custom_symbols if config.custom_symbols else SYMBOLS
+            pool += config.custom_symbols if config.custom_symbols else (
+                UNAMBIGUOUS_SYMBOLS if config.exclude_ambiguous else SYMBOLS
+            )
         return pool
 
     # ------------------------------------------------------------------

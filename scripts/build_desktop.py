@@ -3,7 +3,6 @@
 Build script for desktop packaging using PyInstaller.
 Supports: Windows, Linux, macOS.
 """
-import os
 import platform
 import subprocess
 import sys
@@ -12,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 
 
-def build():
+def build() -> None:
     system = platform.system()
     print(f"Building SecureVault for {system}...")
 
@@ -33,7 +32,7 @@ def build():
         "--name", "SecureVault",
         "--onefile",
         "--windowed",
-        f"--add-data", f"config{sep}config",
+        "--add-data", f"config{sep}config",
         *icon_flag,
         str(ROOT / "main.py"),
     ]

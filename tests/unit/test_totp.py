@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import sys
 import time
+
 import pytest
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
@@ -12,8 +13,11 @@ sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent
 import pyotp
 
 from core.totp.totp_manager import (
-    build_otpauth_uri, generate_totp_secret, get_totp_code,
-    parse_otpauth_uri, verify_totp,
+    build_otpauth_uri,
+    generate_totp_secret,
+    get_totp_code,
+    parse_otpauth_uri,
+    verify_totp,
 )
 from core.utilities.exceptions import TOTPError
 

@@ -3,19 +3,19 @@ Integration tests — backup/restore, import/export.
 """
 from __future__ import annotations
 
-import sys
 import csv
 import json
+import sys
 from pathlib import Path
+
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from core.vault.vault_service import VaultService
-from core.models.vault_models import VaultEntry
 from core.backup.backup_manager import BackupManager
-from core.import_export.importer_exporter import VaultImporter, VaultExporter
-from core.utilities.exceptions import BackupError
+from core.import_export.importer_exporter import VaultExporter, VaultImporter
+from core.models.vault_models import VaultEntry
+from core.vault.vault_service import VaultService
 
 
 @pytest.fixture

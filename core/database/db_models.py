@@ -14,10 +14,9 @@ holding AES-256-GCM encrypted data produced by core.crypto.encryption.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import (
-    BigInteger,
     Boolean,
     Column,
     DateTime,
@@ -27,13 +26,12 @@ from sqlalchemy import (
     LargeBinary,
     String,
     Text,
-    event,
 )
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Base(DeclarativeBase):

@@ -8,15 +8,14 @@ in-memory representation of vault items while the vault is unlocked.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Optional
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _new_id() -> str:
@@ -84,12 +83,12 @@ class VaultEntry(BaseModel):
     url: str = Field(default="")
     notes: str = Field(default="")
     totp_secret: str = Field(default="")
-    category_id: Optional[str] = Field(default=None)
+    category_id: str | None = Field(default=None)
     tags: list[str] = Field(default_factory=list)
     is_favorite: bool = Field(default=False)
     created_at: datetime = Field(default_factory=_utcnow)
     modified_at: datetime = Field(default_factory=_utcnow)
-    last_used_at: Optional[datetime] = Field(default=None)
+    last_used_at: datetime | None = Field(default=None)
     password_history: list[PasswordHistoryEntry] = Field(default_factory=list)
     custom_fields: list[CustomField] = Field(default_factory=list)
 

@@ -7,10 +7,10 @@ Never constructs SQL via string concatenation of user input.
 """
 from __future__ import annotations
 
-import json
+from datetime import UTC
 from pathlib import Path
 
-from sqlalchemy import create_engine, event, inspect, text
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from core.database.db_models import Base, DbSchemaVersion
@@ -136,10 +136,11 @@ class DatabaseManager:
         Version 1: Initial schema. Insert default categories.
         All tables already created by Base.metadata.create_all().
         """
-        from core.models.vault_models import DEFAULT_CATEGORIES
-        from core.database.db_models import DbCategory
         import uuid
-        from datetime import datetime, timezone
+        from datetime import datetime
+
+        from core.database.db_models import DbCategory
+        from core.models.vault_models import DEFAULT_CATEGORIES
 
         for cat_data in DEFAULT_CATEGORIES:
             exists = session.query(DbCategory).filter_by(name=cat_data["name"]).first()
@@ -149,7 +150,7 @@ class DatabaseManager:
                     name=cat_data["name"],
                     icon=cat_data.get("icon", "folder"),
                     color=cat_data.get("color", "#5865F2"),
-                    created_at=datetime.now(timezone.utc),
+                    created_at=datetime.now(UTC),
                 ))
 
     # ------------------------------------------------------------------

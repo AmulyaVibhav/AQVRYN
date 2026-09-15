@@ -3,15 +3,20 @@ Login view — master password entry, vault creation.
 """
 from __future__ import annotations
 
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QFrame, QSizePolicy,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
 
-from core.vault.vault_service import VaultService
-from core.utilities.exceptions import AuthenticationError, VaultNotFoundError, ValidationError
+from core.utilities.exceptions import AuthenticationError, ValidationError
 from core.utilities.logging_utils import get_logger
+from core.vault.vault_service import VaultService
 
 logger = get_logger(__name__)
 

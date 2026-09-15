@@ -11,13 +11,11 @@ Security requirements:
 from __future__ import annotations
 
 import csv
-import io
 import json
 import os
-import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any
 
 from core.models.vault_models import CustomField, ItemType, VaultEntry
 from core.utilities.exceptions import ExportError
@@ -38,7 +36,11 @@ class VaultImporter:
     then immediately passed to VaultService.add_entry() for encryption.
     """
 
-    def import_csv(self, file_path: Path, column_map: dict | None = None) -> list[VaultEntry]:
+    def import_csv(
+        self,
+        file_path: Path,
+        column_map: dict[str, str] | None = None,
+    ) -> list[VaultEntry]:
         """
         Import from CSV file.
 
@@ -69,7 +71,7 @@ class VaultImporter:
 
         entries: list[VaultEntry] = []
         try:
-            with open(file_path, "r", encoding="utf-8-sig", newline="") as f:
+            with open(file_path, encoding="utf-8-sig", newline="") as f:
                 reader = csv.DictReader(f)
                 for i, row in enumerate(reader):
                     try:
@@ -101,7 +103,7 @@ class VaultImporter:
             raise PMImportError(f"File not found: {file_path}")
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 data = json.load(f)
         except json.JSONDecodeError as exc:
             raise PMImportError(f"Invalid JSON file: {exc}") from exc
@@ -151,7 +153,7 @@ class VaultImporter:
             raise PMImportError(f"File not found: {file_path}")
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 data = json.load(f)
         except json.JSONDecodeError as exc:
             raise PMImportError(f"Invalid Bitwarden JSON file: {exc}") from exc
@@ -253,7 +255,7 @@ class VaultExporter:
             export_data = {
                 "format": "securevault_export",
                 "version": 1,
-                "exported_at": datetime.now(timezone.utc).isoformat(),
+                "exported_at": datetime.now(UTC).isoformat(),
                 "entry_count": len(entries),
                 "entries": [
                     {

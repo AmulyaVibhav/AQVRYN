@@ -6,18 +6,17 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from PyQt6.QtCore import QTimer, Qt
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QMessageBox
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 
 # Add project root to path so imports work
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config.settings import APP_NAME, APP_VERSION, DATA_DIR, LOG_DIR, LOG_LEVEL
-from core.utilities.logging_utils import configure_logging, get_logger
-from core.vault.vault_service import VaultService
+from config.settings import APP_NAME, APP_VERSION, LOG_DIR, LOG_LEVEL
 from core.security.auto_lock import AutoLockManager
 from core.security.clipboard_manager import ClipboardManager
+from core.utilities.logging_utils import configure_logging, get_logger
+from core.vault.vault_service import VaultService
 from desktop.views.login_view import LoginView
 from desktop.views.main_view import MainView
 

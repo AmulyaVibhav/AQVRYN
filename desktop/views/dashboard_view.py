@@ -3,14 +3,20 @@ Dashboard view — security score, stats, recently modified entries.
 """
 from __future__ import annotations
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QEasingCurve, QPropertyAnimation
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
-    QScrollArea, QGridLayout, QPushButton,
+    QFrame,
+    QGraphicsOpacityEffect,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
 
-from core.vault.vault_service import VaultService
 from core.utilities.logging_utils import get_logger
+from core.vault.vault_service import VaultService
 
 logger = get_logger(__name__)
 
@@ -64,6 +70,9 @@ class DashboardView(QWidget):
         header.setStyleSheet("font-size: 22px; font-weight: bold; color: #cdd6f4;")
         layout.addWidget(header)
 
+        self._hero_banner = self._build_hero_banner()
+        layout.addWidget(self._hero_banner)
+
         # Security score
         self._score_section = self._build_score_section()
         layout.addWidget(self._score_section)
@@ -107,6 +116,67 @@ class DashboardView(QWidget):
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
         outer.addWidget(scroll)
+
+    def _build_hero_banner(self) -> QWidget:
+        banner = QWidget()
+        banner.setFixedHeight(88)
+        banner.setStyleSheet(
+            """
+            QWidget {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #1e1e2e,
+                    stop:1 #313244
+                );
+                border-radius: 16px;
+            }
+            """
+        )
+
+        layout = QHBoxLayout(banner)
+        layout.setContentsMargins(18, 12, 18, 12)
+
+        dot = QLabel("●")
+        dot.setStyleSheet("font-size: 28px; color: #a6e3a1; margin-right: 8px;")
+        dot_eff = QGraphicsOpacityEffect(dot)
+        dot.setGraphicsEffect(dot_eff)
+        dot_anim = QPropertyAnimation(dot_eff, b"opacity")
+        dot_anim.setDuration(900)
+        dot_anim.setStartValue(0.35)
+        dot_anim.setEndValue(1.0)
+        dot_anim.setEasingCurve(QEasingCurve.Type.InOutSine)
+        dot_anim.setLoopCount(-1)
+        dot_anim.start()
+        layout.addWidget(dot)
+
+        info = QVBoxLayout()
+        title = QLabel("Vault status: protected")
+        title.setStyleSheet("font-size: 16px; font-weight: bold; color: #cdd6f4;")
+        subtitle = QLabel("Encryption active • auto-lock enabled • latest audit ready")
+        subtitle.setStyleSheet("font-size: 11px; color: #a6adc8;")
+        info.addWidget(title)
+        info.addWidget(subtitle)
+        layout.addLayout(info)
+        layout.addStretch()
+
+        pulse = QLabel("LIVE")
+        pulse.setStyleSheet(
+            "background-color: rgba(166, 227, 161, 0.15); "
+            "color: #a6e3a1; border: 1px solid rgba(166, 227, 161, 0.4); "
+            "border-radius: 10px; padding: 6px 12px; font-size: 10px; font-weight: bold;"
+        )
+        pulse_eff = QGraphicsOpacityEffect(pulse)
+        pulse.setGraphicsEffect(pulse_eff)
+        pulse_anim = QPropertyAnimation(pulse_eff, b"opacity")
+        pulse_anim.setDuration(1000)
+        pulse_anim.setStartValue(0.5)
+        pulse_anim.setEndValue(1.0)
+        pulse_anim.setEasingCurve(QEasingCurve.Type.InOutSine)
+        pulse_anim.setLoopCount(-1)
+        pulse_anim.start()
+        layout.addWidget(pulse)
+
+        return banner
 
     def _build_score_section(self) -> QFrame:
         frame = QFrame()

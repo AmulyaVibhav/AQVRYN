@@ -8,12 +8,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from config.settings import (
-    DATA_DIR,
-    DEFAULT_AUTO_LOCK_SECONDS,
-    DEFAULT_PASSWORD_HISTORY_SIZE,
     VAULT_DB_PATH,
 )
 from core.authentication.auth_manager import AuthManager
@@ -27,16 +23,15 @@ from core.models.vault_models import (
     VaultEntry,
     VaultMetadata,
 )
-from core.vault.vault_repository import VaultRepository
 from core.utilities.exceptions import (
     AuthenticationError,
-    InvalidVaultError,
     ValidationError,
     VaultAlreadyExistsError,
     VaultLockedError,
     VaultNotFoundError,
 )
 from core.utilities.logging_utils import get_logger, security_logger
+from core.vault.vault_repository import VaultRepository
 
 logger = get_logger(__name__)
 
@@ -366,6 +361,7 @@ class VaultService:
 
     def _update_entry_count(self, session) -> None:  # type: ignore[type-arg]
         from sqlalchemy import func
+
         from core.database.db_models import DbVaultEntry
         count = session.query(func.count(DbVaultEntry.id)).scalar() or 0
         row = session.query(DbVaultMetadata).first()

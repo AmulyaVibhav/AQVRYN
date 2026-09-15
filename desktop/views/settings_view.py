@@ -5,16 +5,25 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QScrollArea,
-    QPushButton, QCheckBox, QSpinBox, QComboBox, QLineEdit,
-    QMessageBox, QFileDialog, QTabWidget, QFormLayout, QGroupBox,
+    QCheckBox,
+    QFileDialog,
+    QFormLayout,
+    QFrame,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QSpinBox,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-from core.vault.vault_service import VaultService
-from core.models.vault_models import AppSettings
 from core.utilities.logging_utils import get_logger
+from core.vault.vault_service import VaultService
 
 logger = get_logger(__name__)
 

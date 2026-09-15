@@ -12,8 +12,6 @@ Never stores passwords in logs.
 from __future__ import annotations
 
 import threading
-import time
-from typing import Optional
 
 import pyperclip
 
@@ -36,10 +34,10 @@ class ClipboardManager:
 
     def __init__(self, clear_after_seconds: int = 30) -> None:
         self._clear_after = clear_after_seconds
-        self._timer: Optional[threading.Timer] = None
-        self._copied_value: Optional[str] = None   # Not logged, not persisted
+        self._timer: threading.Timer | None = None
+        self._copied_value: str | None = None   # Not logged, not persisted
 
-    def copy(self, value: str, clear_after: Optional[int] = None) -> None:
+    def copy(self, value: str, clear_after: int | None = None) -> None:
         """
         Copy a value to the system clipboard and schedule auto-clear.
 

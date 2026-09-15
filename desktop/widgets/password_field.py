@@ -3,10 +3,17 @@ PasswordField widget — password input with show/hide, copy, generate.
 """
 from __future__ import annotations
 
-from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QLineEdit, QPushButton, QDialog,
-    QVBoxLayout, QLabel, QSlider, QCheckBox, QDialogButtonBox,
+    QCheckBox,
+    QDialog,
+    QDialogButtonBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
 
 from core.utilities.logging_utils import get_logger
@@ -173,7 +180,11 @@ class PasswordGeneratorDialog(QDialog):
 
     def _generate(self) -> None:
         try:
-            from core.generator.password_generator import GeneratorConfig, PasswordGenerator, estimate_strength
+            from core.generator.password_generator import (
+                GeneratorConfig,
+                PasswordGenerator,
+                estimate_strength,
+            )
             config = GeneratorConfig(
                 length=self._length_spin.value(),
                 use_uppercase=self._upper.isChecked(),

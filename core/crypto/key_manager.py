@@ -17,13 +17,14 @@ Changing the master password requires only:
 from __future__ import annotations
 
 import base64
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Any
 
-from config.settings import DEK_LENGTH, KEK_LENGTH
+from config.settings import DEK_LENGTH
 from core.crypto.encryption import decrypt, encrypt
 from core.crypto.kdf import KDFParams, derive_key, generate_kdf_params
 from core.crypto.secure_random import generate_key
-from core.utilities.exceptions import DecryptionError, IntegrityError, KeyDerivationError
+from core.utilities.exceptions import DecryptionError, IntegrityError
 from core.utilities.logging_utils import get_logger
 
 logger = get_logger(__name__)
@@ -44,14 +45,14 @@ class VaultKeyMaterial:
     kdf_params: KDFParams
     wrapped_dek: bytes   # AES-GCM encrypted DEK (encrypted with KEK)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "kdf_params": self.kdf_params.to_dict(),
             "wrapped_dek": base64.b64encode(self.wrapped_dek).decode(),
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "VaultKeyMaterial":
+    def from_dict(cls, data: dict[str, Any]) -> "VaultKeyMaterial":
         return cls(
             kdf_params=KDFParams.from_dict(data["kdf_params"]),
             wrapped_dek=base64.b64decode(data["wrapped_dek"]),

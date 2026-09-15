@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import threading
 import time
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from core.utilities.logging_utils import get_logger
 
@@ -35,7 +35,7 @@ class AutoLockManager:
         self._lock_callback = lock_callback
         self._last_activity = time.monotonic()
         self._running = False
-        self._thread: Optional[threading.Thread] = None
+        self._thread: threading.Thread | None = None
         self._stop_event = threading.Event()
 
     def start(self) -> None:

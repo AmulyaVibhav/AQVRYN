@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import base64
 from dataclasses import dataclass
+from typing import Any
 
 from argon2.low_level import Type, hash_secret_raw  # argon2-cffi low-level API
 
@@ -30,7 +31,6 @@ from config.settings import (
     ARGON2_MEMORY_COST,
     ARGON2_PARALLELISM,
     ARGON2_TIME_COST,
-    KEK_LENGTH,
     SALT_LENGTH,
 )
 from core.crypto.secure_random import generate_salt
@@ -50,7 +50,7 @@ class KDFParams:
     parallelism: int
     hash_length: int
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "salt": base64.b64encode(self.salt).decode(),
             "memory_cost": self.memory_cost,
@@ -60,7 +60,7 @@ class KDFParams:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "KDFParams":
+    def from_dict(cls, data: dict[str, Any]) -> KDFParams:
         return cls(
             salt=base64.b64decode(data["salt"]),
             memory_cost=int(data["memory_cost"]),

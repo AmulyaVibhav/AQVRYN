@@ -10,7 +10,7 @@ import logging
 import logging.handlers
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -55,7 +55,7 @@ def get_logger(name: str) -> logging.Logger:
 def configure_logging(log_dir: Path, level: str = "INFO") -> None:
     """Configure root logging: console + rotating file handler."""
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / f"securevault_{datetime.now(timezone.utc).strftime('%Y%m%d')}.log"
+    log_file = log_dir / f"securevault_{datetime.now(UTC).strftime('%Y%m%d')}.log"
 
     fmt = logging.Formatter(
         fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
@@ -135,7 +135,7 @@ class SecurityEventLogger:
 
 
 def _ts() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 # Module-level singleton
